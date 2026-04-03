@@ -1,11 +1,13 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { DollarSign, ArrowUpRight, ArrowDownRight, Activity } from "lucide-react"
 
 export function SummaryCards() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
+  const currency = preferences.currency
 
   const income = transactions
     .filter(tx => tx.type === "income")
@@ -77,7 +79,7 @@ export function SummaryCards() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold tracking-tight">${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className="text-3xl font-bold tracking-tight">{formatCurrency(balance, currency)}</div>
           <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
              {balanceTrend.val >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-primary" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-destructive" />}
             <span className={balanceTrend.val >= 0 ? 'text-primary' : 'text-destructive'}>{balanceTrend.text}</span>&nbsp;from last month
@@ -92,7 +94,7 @@ export function SummaryCards() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">${income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">{formatCurrency(income, currency)}</div>
           <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
             {incomeTrend.val >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-rose-500" />}
             <span className={incomeTrend.val >= 0 ? 'text-emerald-500' : 'text-rose-500'}>{incomeTrend.text}</span>&nbsp;from last month
@@ -107,7 +109,7 @@ export function SummaryCards() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">${expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <div className="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">{formatCurrency(expenses, currency)}</div>
           <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
              {expenseTrend.val < 0 ? <ArrowDownRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowUpRight className="mr-1 h-3 w-3 text-rose-500" />}
             <span className={expenseTrend.val < 0 ? 'text-emerald-500' : 'text-rose-500'}>{expenseTrend.text}</span>&nbsp;from last month

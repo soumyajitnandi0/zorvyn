@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { SummaryCards } from "@/components/dashboard/SummaryCards"
 import { BalanceChart } from "@/components/dashboard/BalanceChart"
 import { ExpenseChart } from "@/components/dashboard/ExpenseChart"
@@ -8,18 +9,14 @@ import { InsightsGrid } from "@/components/dashboard/InsightsGrid"
 import { RecentTransactions } from "@/components/dashboard/RecentTransactions"
 
 function HeroBalance() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
 
   const income = transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0)
   const expenses = transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0)
   const balance = income - expenses
   const isPositive = balance >= 0
 
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2
-  }).format(Math.abs(balance))
+  const formatted = formatCurrency(Math.abs(balance), preferences.currency)
 
   return (
     <div className="mb-14 animate-in fade-in slide-in-from-bottom-4 duration-700">

@@ -1,11 +1,13 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts"
 
 export function BalanceChart() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
+  const currency = preferences.currency
   
   const data = []
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
@@ -63,7 +65,7 @@ export function BalanceChart() {
                 fontSize={11}
                 tickLine={false}
                 axisLine={false}
-                tickFormatter={(value) => `$${value}`}
+                tickFormatter={(value) => formatCurrency(value, currency)}
                 opacity={0.35}
                 dx={-10}
               />
@@ -78,7 +80,7 @@ export function BalanceChart() {
                 labelStyle={{ color: 'rgba(99,102,241,0.8)', fontSize: '10px', fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '4px' }}
                 itemStyle={{ color: '#818CF8', fontWeight: 700, fontSize: '16px' }}
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter={(value: any) => [`$${Number(value).toLocaleString()}`, '']}
+                formatter={(value: any) => [formatCurrency(Number(value), currency), '']}
                 cursor={{ stroke: 'rgba(99,102,241,0.15)', strokeWidth: 1, strokeDasharray: '4 4' }}
               />
               <Area

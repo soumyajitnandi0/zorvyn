@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { TransactionFormDialog } from "@/components/transactions/TransactionFormDialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -39,7 +40,8 @@ function SortIcon({ field, sortField, sortDir }: { field: "date" | "amount"; sor
 }
 
 export function RecentTransactions() {
-  const { transactions, role, deleteTransaction } = useAppStore()
+  const { transactions, role, deleteTransaction, preferences } = useAppStore()
+  const currency = preferences.currency
 
   const [search, setSearch] = useState("")
   const [filterType, setFilterType] = useState("all")
@@ -306,11 +308,7 @@ export function RecentTransactions() {
                       : "text-rose-600 dark:text-rose-400"
                   }`}
                 >
-                  {tx.type === "income" ? "+" : "-"}$
-                  {tx.amount.toLocaleString(undefined, {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
+                  {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount, currency)}
                 </span>
               </div>
 

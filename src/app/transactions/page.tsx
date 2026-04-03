@@ -1,11 +1,13 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { TransactionTable } from "@/components/transactions/TransactionTable"
 import { ArrowDownRight, ArrowUpRight, ReceiptText } from "lucide-react"
 
 function TransactionStats() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
+  const currency = preferences.currency
 
   const income = transactions.filter(t => t.type === "income").reduce((s, t) => s + t.amount, 0)
   const expenses = transactions.filter(t => t.type === "expense").reduce((s, t) => s + t.amount, 0)
@@ -22,7 +24,7 @@ function TransactionStats() {
     },
     {
       label: "Total Inflow",
-      value: `$${income.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+      value: formatCurrency(income, currency),
       sub: "Across all periods",
       icon: ArrowDownRight,
       iconBg: "bg-emerald-500/10",
@@ -31,7 +33,7 @@ function TransactionStats() {
     },
     {
       label: "Total Outflow",
-      value: `$${expenses.toLocaleString(undefined, { minimumFractionDigits: 2 })}`,
+      value: formatCurrency(expenses, currency),
       sub: "Across all periods",
       icon: ArrowUpRight,
       iconBg: "bg-rose-500/10",

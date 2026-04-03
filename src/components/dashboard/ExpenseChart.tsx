@@ -1,6 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 
@@ -16,7 +17,8 @@ const COLORS = [
 ]
 
 export function ExpenseChart() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
+  const currency = preferences.currency
 
   const now = new Date()
   const expenses = transactions.filter(tx => {
@@ -68,14 +70,14 @@ export function ExpenseChart() {
                 </Pie>
                 {/* Center total label */}
                 <text x="50%" y="44%" textAnchor="middle" dominantBaseline="middle" style={{ fill: 'var(--foreground)', fontSize: '20px', fontWeight: 700 }}>
-                  ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                  {formatCurrency(total, currency)}
                 </text>
                 <text x="50%" y="51%" textAnchor="middle" dominantBaseline="middle" style={{ fill: 'var(--muted-foreground)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                   TOTAL
                 </text>
                 <Tooltip
                   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                  formatter={(value: any) => [`$${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Amount']}
+                  formatter={(value: any) => [formatCurrency(Number(value), currency), 'Amount']}
                   contentStyle={{
                     borderRadius: '12px',
                     border: '1px solid var(--border)',

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -15,7 +16,8 @@ function SortIcon({ field, sortField, sortDir }: { field: "date" | "amount"; sor
 }
 
 export function TransactionTable() {
-  const { transactions, role, deleteTransaction } = useAppStore()
+  const { transactions, role, deleteTransaction, preferences } = useAppStore()
+  const currency = preferences.currency
   const [search, setSearch] = useState("")
   const [filterType, setFilterType] = useState("all")
   const [filterCategory, setFilterCategory] = useState("all")
@@ -223,7 +225,7 @@ export function TransactionTable() {
                  {/* Amount Column */}
                  <div className="flex flex-col items-end justify-center shrink-0 ml-2">
                    <div className={`text-base sm:text-xl font-mono tracking-tighter font-bold ${tx.type === "income" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
-                     {tx.type === "income" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                     {tx.type === "income" ? "+" : "-"}{formatCurrency(tx.amount, currency)}
                    </div>
                  </div>
                  

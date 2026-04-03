@@ -1,10 +1,12 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
+import { formatCurrency } from "@/lib/utils"
 import { Card } from "@/components/ui/card"
 
 export function InsightsGrid() {
-  const { transactions } = useAppStore()
+  const { transactions, preferences } = useAppStore()
+  const currency = preferences.currency
 
   const expenses = transactions.filter(tx => tx.type === "expense")
   
@@ -64,7 +66,7 @@ export function InsightsGrid() {
       monthlyInsightText = `Expenses are exactly tracking last month.`
     }
   } else if (thisMonthExpenses > 0) {
-    monthlyInsightText = `You spent $${thisMonthExpenses.toLocaleString()} this month.`
+    monthlyInsightText = `You spent ${formatCurrency(thisMonthExpenses, currency)} this month.`
   }
 
   const insights = [
@@ -76,12 +78,12 @@ export function InsightsGrid() {
     {
       icon: "↑",
       label: "Largest Expense",
-      value: `${largestTx.description} · $${largestTx.amount.toLocaleString()}`,
+      value: `${largestTx.description} · ${formatCurrency(largestTx.amount, currency)}`,
     },
     {
       icon: "⬡",
       label: "Top Category",
-      value: `${highestCategory[0]} · $${Number(highestCategory[1]).toLocaleString()} total`,
+      value: `${highestCategory[0]} · ${formatCurrency(Number(highestCategory[1]), currency)} total`,
     },
     {
       icon: "◈",

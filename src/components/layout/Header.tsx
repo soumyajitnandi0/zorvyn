@@ -6,8 +6,12 @@ import { usePathname } from "next/navigation"
 import { ThemeToggle } from "@/components/ThemeToggle"
 import { RoleSwitcher } from "@/components/RoleSwitcher"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Menu, X, LayoutDashboard, ArrowLeftRight, Settings } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { Menu, X, LayoutDashboard, ArrowLeftRight, Settings, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { useAppStore } from "@/lib/store"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
 
 const navItems = [
   { name: "Overview", href: "/", icon: LayoutDashboard },
@@ -19,6 +23,14 @@ export function Header() {
   const pathname = usePathname()
   const isTransactions = pathname === "/transactions"
   const isSettings = pathname === "/settings"
+  const { profile, resetData } = useAppStore()
+  const router = useRouter()
+
+  const handleSignOut = () => {
+    resetData()
+    toast.success("Signed out successfully", { description: "Your session has been cleared." })
+    router.push("/")
+  }
   
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
@@ -34,7 +46,7 @@ export function Header() {
         {/* Left: Breadcrumb + Date (Hidden on mobile when menu open to save space, or just keep it) */}
         <div className="flex flex-col">
           <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-            <span>Zorvyn</span>
+            <Link href="/" className="hover:text-foreground transition-colors">Zorvyn</Link>
             <span className="text-border">·</span>
             <span className="text-primary">{pageName}</span>
           </div>
@@ -49,10 +61,53 @@ export function Header() {
           </div>
           <ThemeToggle />
           <div className="hidden sm:block h-5 w-px bg-border" />
-          <Avatar className="h-9 w-9 ring-2 ring-border ring-offset-2 ring-offset-background cursor-pointer transition-all duration-200 hover:ring-primary/60">
-            <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-            <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">SN</AvatarFallback>
-          </Avatar>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60">
+                <Avatar className="h-9 w-9 ring-2 ring-border ring-offset-2 ring-offset-background cursor-pointer transition-all duration-200 hover:ring-primary/60">
+                  <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
+                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">SN</AvatarFallback>
+                </Avatar>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-64 rounded-2xl p-0 overflow-hidden border border-border/60 shadow-xl bg-card/95 backdrop-blur-xl">
+              {/* Profile header */}
+              <div className="relative px-4 py-4 bg-gradient-to-br from-primary/10 via-card to-card border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-11 w-11 ring-2 ring-primary/30 ring-offset-1 ring-offset-card">
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback className="bg-primary/10 text-primary font-bold text-sm">SN</AvatarFallback>
+                  </Avatar>
+                  <div className="flex flex-col min-w-0">
+                    <p className="text-sm font-bold tracking-tight truncate">Soumyajit Nandi</p>
+                    <p className="text-[11px] text-muted-foreground truncate">soumyajit@zorvyn.io</p>
+                    <span className="mt-1 inline-flex w-fit items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-500 text-[9px] font-bold uppercase tracking-widest ring-1 ring-emerald-500/20">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" /> Active
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Entity info */}
+              <div className="px-4 py-2.5 border-b border-border/50">
+                <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-muted-foreground/60 mb-0.5">Organization</p>
+                <p className="text-xs font-semibold text-foreground truncate">{profile.entityName}</p>
+              </div>
+
+              {/* Actions */}
+              <div className="p-1.5">
+                <DropdownMenuItem asChild className="rounded-xl gap-2.5 cursor-pointer px-3 py-2.5 text-sm font-medium">
+                  <Link href="/settings" className="flex items-center gap-2.5">
+                    <Settings className="h-4 w-4 text-muted-foreground shrink-0" /> Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator className="my-1" />
+                <DropdownMenuItem onClick={handleSignOut} className="rounded-xl gap-2.5 cursor-pointer px-3 py-2.5 text-sm font-medium text-rose-500 focus:text-rose-500 focus:bg-rose-500/10">
+                  <LogOut className="h-4 w-4" /> Sign Out
+                </DropdownMenuItem>
+              </div>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Mobile Menu Toggle */}
           <button 

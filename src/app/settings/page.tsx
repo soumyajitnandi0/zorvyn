@@ -15,6 +15,7 @@ import {
   Wallet
 } from "lucide-react"
 import { toast } from "sonner"
+import { useAppStore } from "@/lib/store"
 import { cn } from "@/lib/utils"
 
 // ─── Toggle Switch ─────────────────────────────────────────────────
@@ -119,22 +120,43 @@ function SettingsTabsList() {
 }
 
 export default function SettingsPage() {
-  const [security, setSecurity] = useState({
-    twoFactor: true,
-    sessionTimeout: true,
-    loginNotifications: true,
-  })
+  const {
+    theme, setTheme,
+    profile, setProfile,
+    security, setSecurity,
+    preferences, setPreferences,
+  } = useAppStore()
 
-  const [theme, setTheme] = useState<"dark" | "light" | "system">("dark")
-  const [currency, setCurrency] = useState("USD")
-  
-  const handleSave = () => toast.success("Configuration updated successfully")
+  // Apply theme to DOM
+  React.useEffect(() => {
+    const root = window.document.documentElement
+    root.classList.remove("light", "dark")
+    if (theme === "system") {
+      const sys = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+      root.classList.add(sys)
+    } else {
+      root.classList.add(theme)
+    }
+  }, [theme])
+
+  // Local profile form state (committed on Save)
+  const [entityName, setEntityName] = useState(profile.entityName)
+  const [address, setAddress] = useState(profile.registeredAddress)
+
+  // API key reveal state
+  const [revealProd, setRevealProd] = useState(false)
+  const [revealTest, setRevealTest] = useState(false)
+
+  const handleSaveProfile = () => {
+    setProfile({ entityName, registeredAddress: address })
+    toast.success("Profile saved")
+  }
 
   const themeOptions = [
-    { id: "dark", label: "Dark", icon: Moon },
-    { id: "light", label: "Light", icon: Sun },
-    { id: "system", label: "System", icon: Monitor },
-  ] as const
+    { id: "dark" as const,   label: "Dark",   icon: Moon },
+    { id: "light" as const,  label: "Light",  icon: Sun },
+    { id: "system" as const, label: "System", icon: Monitor },
+  ]
 
   return (
     <div className="animate-in fade-in duration-700 pb-20 w-full space-y-6">
@@ -192,7 +214,7 @@ export default function SettingsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4 border-t border-border/50">
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Legal Entity Name</Label>
-                  <Input defaultValue="Zorvyn Global LLC" className="h-12 bg-muted/30 border-transparent hover:border-border/60 focus-visible:bg-background rounded-xl px-4 text-base shadow-none transition-all" />
+                  <Input value={entityName} onChange={e => setEntityName(e.target.value)} className="h-12 bg-muted/30 border-transparent hover:border-border/60 focus-visible:bg-background rounded-xl px-4 text-base shadow-none transition-all" />
                 </div>
                 <div className="space-y-2">
                   <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Tax ID / EIN</Label>
@@ -201,10 +223,10 @@ export default function SettingsPage() {
               </div>
               <div className="space-y-2">
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Registered Address</Label>
-                <Input defaultValue="800 Financial District, New York, NY 10004" className="h-12 bg-muted/30 border-transparent hover:border-border/60 focus-visible:bg-background rounded-xl px-4 text-base shadow-none" />
+                <Input value={address} onChange={e => setAddress(e.target.value)} className="h-12 bg-muted/30 border-transparent hover:border-border/60 focus-visible:bg-background rounded-xl px-4 text-base shadow-none" />
               </div>
               <div className="pt-4 pb-2 flex justify-stretch sm:justify-end">
-                <Button onClick={handleSave} className="w-full sm:w-auto h-12 rounded-xl px-8 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
+                <Button onClick={handleSaveProfile} className="w-full sm:w-auto h-12 rounded-xl px-8 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
                   <Check className="h-5 w-5" /> Save Changes
                 </Button>
               </div>
@@ -327,11 +349,15 @@ export default function SettingsPage() {
                       <p className="font-bold text-sm">Production Key</p>
                       <span className="px-2 py-0.5 rounded-md bg-rose-500/10 text-rose-500 text-[9px] uppercase tracking-widest font-bold">Live</span>
                     </div>
-                    <code className="text-xs font-mono text-muted-foreground">zk_live_9283********************</code>
+                    <code className="text-xs font-mono text-muted-foreground">
+                      {revealProd ? "zk_live_9283abcdef1234567890" : "zk_live_9283********************"}
+                    </code>
                   </div>
                   <div className="flex gap-2 w-full sm:w-auto">
-                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none rounded-xl text-xs h-9">Roll Key</Button>
-                    <Button size="sm" className="flex-1 sm:flex-none rounded-xl text-xs font-bold h-9 bg-foreground text-background">Reveal</Button>
+                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none rounded-xl text-xs h-9" onClick={() => { toast.success("Production key rolled") }}>Roll Key</Button>
+                    <Button size="sm" className="flex-1 sm:flex-none rounded-xl text-xs font-bold h-9 bg-foreground text-background" onClick={() => setRevealProd(v => !v)}>
+                      {revealProd ? "Hide" : "Reveal"}
+                    </Button>
                   </div>
                 </div>
                 
@@ -341,11 +367,15 @@ export default function SettingsPage() {
                       <p className="font-bold text-sm">Test Key</p>
                       <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-500 text-[9px] uppercase tracking-widest font-bold">Sandbox</span>
                     </div>
-                    <code className="text-xs font-mono text-muted-foreground">zk_test_4110********************</code>
+                    <code className="text-xs font-mono text-muted-foreground">
+                      {revealTest ? "zk_test_4110abcdef1234567890" : "zk_test_4110********************"}
+                    </code>
                   </div>
                   <div className="flex gap-2 w-full sm:w-auto">
-                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none rounded-xl text-xs h-9">Roll Key</Button>
-                    <Button size="sm" className="flex-1 sm:flex-none rounded-xl text-xs font-bold h-9 bg-foreground text-background">Reveal</Button>
+                    <Button variant="outline" size="sm" className="flex-1 sm:flex-none rounded-xl text-xs h-9" onClick={() => { toast.success("Test key rolled") }}>Roll Key</Button>
+                    <Button size="sm" className="flex-1 sm:flex-none rounded-xl text-xs font-bold h-9 bg-foreground text-background" onClick={() => setRevealTest(v => !v)}>
+                      {revealTest ? "Hide" : "Reveal"}
+                    </Button>
                   </div>
                 </div>
               </div>
@@ -390,7 +420,7 @@ export default function SettingsPage() {
           <SettingsCard title="Operating Configuration" icon={Settings}>
             <div className="py-2">
               <SettingRow label="Base Currency" description="Default tracking currency for cumulative analytics">
-                <Select value={currency} onValueChange={(v) => v && setCurrency(v)}>
+                <Select value={preferences.currency} onValueChange={(v) => v && setPreferences({ currency: v })}>
                   <SelectTrigger className="w-[140px] rounded-xl bg-muted/40 border-transparent hover:border-border font-bold">
                     <SelectValue />
                   </SelectTrigger>
@@ -402,7 +432,7 @@ export default function SettingsPage() {
                 </Select>
               </SettingRow>
               <SettingRow label="Fiscal Year Start" description="Used for YTD tax calculation and summaries" border={false}>
-                <Select defaultValue="jan">
+                <Select value={preferences.fiscalYearStart} onValueChange={(v) => v && setPreferences({ fiscalYearStart: v })}>
                   <SelectTrigger className="w-[140px] rounded-xl bg-muted/40 border-transparent hover:border-border font-bold">
                     <SelectValue />
                   </SelectTrigger>
@@ -422,15 +452,15 @@ export default function SettingsPage() {
           <SettingsCard title="Compliance & Access" icon={ShieldCheck}>
             <div className="py-2">
               <SettingRow label="Require 2FA for Transfers" description="Prompt for authenticator code on transactions over $10,000">
-                <Toggle checked={security.twoFactor} onToggle={() => { setSecurity(p => ({ ...p, twoFactor: !p.twoFactor })); toast(security.twoFactor ? "2FA requirement disabled" : "2FA requirement enabled") }} />
+                <Toggle checked={security.twoFactor} onToggle={() => { setSecurity({ twoFactor: !security.twoFactor }); toast(security.twoFactor ? "2FA disabled" : "2FA enabled") }} />
               </SettingRow>
               <SettingRow label="Biometric Recovery" description="Allow FaceID/TouchID strictly for password resets">
-                 <Button variant="outline" size="sm" className="rounded-xl h-9 gap-2">
+                 <Button variant="outline" size="sm" className="rounded-xl h-9 gap-2" onClick={() => toast.success("Biometric setup initiated")}>
                    <Fingerprint className="h-4 w-4" /> Setup
                  </Button>
               </SettingRow>
               <SettingRow label="Audit Log Access" description="Allow external auditors to view read-only logs" border={false}>
-                <Toggle checked={false} onToggle={() => toast("Auditor invites require Enterprise Plan")} />
+                <Toggle checked={security.auditLogAccess} onToggle={() => { setSecurity({ auditLogAccess: !security.auditLogAccess }); toast(security.auditLogAccess ? "Audit access revoked" : "Auditor invites require Enterprise Plan") }} />
               </SettingRow>
             </div>
           </SettingsCard>
