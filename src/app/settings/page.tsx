@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import * as React from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -63,21 +64,60 @@ function SettingsCard({ title, icon: Icon, children, badge }: {
 }) {
   return (
     <div className="rounded-[24px] bg-card border border-border/80 overflow-hidden shadow-sm transition-all duration-300">
-      <div className="flex items-center justify-between px-6 py-5 border-b border-border/50 bg-muted/20">
+      <div className="flex items-center justify-between px-4 sm:px-6 py-4 sm:py-5 border-b border-border/50 bg-muted/20">
         <div className="flex items-center gap-3">
           <div className="flex items-center justify-center p-2 rounded-xl bg-primary/10">
-            <Icon className="h-5 w-5 text-primary" />
+            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           </div>
-          <h2 className="text-base font-bold tracking-tight text-foreground">{title}</h2>
+          <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground">{title}</h2>
         </div>
         {badge && <div>{badge}</div>}
       </div>
-      <div className="px-6">{children}</div>
+      <div className="px-4 sm:px-6">{children}</div>
     </div>
   )
 }
 
-// ─── Main Page ─────────────────────────────────────────────────────
+// ─── Responsive Tab List ────────────────────────────────────────────
+const tabs = [
+  { value: "profile",     label: "Profile & KYC",   icon: User },
+  { value: "banks",       label: "Linked Banks",    icon: Landmark },
+  { value: "billing",     label: "Billing & Plans", icon: CreditCard },
+  { value: "api",         label: "API & Webhooks",  icon: Cpu },
+  { value: "preferences", label: "Preferences",     icon: Settings },
+  { value: "security",    label: "Security",        icon: ShieldCheck },
+]
+
+function SettingsTabsList() {
+  const [isDesktop, setIsDesktop] = useState(false)
+  React.useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)")
+    setIsDesktop(mq.matches)
+    const handler = (e: MediaQueryListEvent) => setIsDesktop(e.matches)
+    mq.addEventListener("change", handler)
+    return () => mq.removeEventListener("change", handler)
+  }, [])
+
+  return (
+    <TabsList
+      style={{ flexDirection: isDesktop ? "column" : "row", height: "auto", width: isDesktop ? "200px" : "100%" }}
+      className="bg-card/60 border border-border/50 p-1 shrink-0 gap-0.5 rounded-2xl overflow-x-auto scrollbar-none"
+    >
+      {tabs.map(tab => (
+        <TabsTrigger
+          key={tab.value}
+          value={tab.value}
+          style={{ height: "auto", width: isDesktop ? "100%" : "auto", justifyContent: isDesktop ? "flex-start" : "center" }}
+          className="flex flex-1 md:flex-none gap-2.5 px-3 py-2.5 rounded-xl data-active:bg-background data-active:text-primary data-active:shadow-sm text-muted-foreground transition-all hover:bg-muted/50 border border-transparent data-active:border-border/60"
+        >
+          <tab.icon className="h-4 w-4 shrink-0" />
+          {isDesktop && <span className="text-sm font-bold tracking-tight">{tab.label}</span>}
+        </TabsTrigger>
+      ))}
+    </TabsList>
+  )
+}
+
 export default function SettingsPage() {
   const [security, setSecurity] = useState({
     twoFactor: true,
@@ -97,13 +137,13 @@ export default function SettingsPage() {
   ] as const
 
   return (
-    <div className="animate-in fade-in duration-700 max-w-6xl mx-auto pb-20 w-full space-y-8">
+    <div className="animate-in fade-in duration-700 pb-20 w-full space-y-6">
 
       {/* ── PAGE HEADER ── */}
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-1 px-1">
         <div className="flex items-center gap-3">
-          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center">
-            <Settings className="h-4 w-4 sm:h-5 w-5 text-primary" />
+          <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-xl bg-primary/10 ring-1 ring-primary/20 flex items-center justify-center shrink-0">
+            <Settings className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
           </div>
           <h1 className="text-2xl sm:text-3xl md:text-4xl font-black tracking-tighter">
             Platform Configuration
@@ -115,30 +155,11 @@ export default function SettingsPage() {
       </div>
 
       {/* ── TABS / SIDEBAR ── */}
-      <Tabs defaultValue="profile" orientation="vertical" className="flex flex-col md:flex-row gap-6 md:gap-8 lg:gap-10 w-full items-start">
-        {/* Navigation Sidebar */}
-        <TabsList className="bg-muted/10 md:bg-card/30 border border-border/50 md:backdrop-blur-sm p-1.5 h-auto !h-auto flex flex-row md:flex-col w-full md:w-[240px] shrink-0 gap-1 overflow-x-auto md:overflow-visible scrollbar-none snap-x md:snap-none mask-fade-right md:mask-none justify-start rounded-[24px]">
-          {[
-            { value: "profile",     label: "Profile & KYC",icon: User },
-            { value: "banks",       label: "Linked Banks", icon: Landmark },
-            { value: "billing",     label: "Billing & Plans", icon: CreditCard },
-            { value: "api",         label: "API & Webhooks",icon: Cpu },
-            { value: "preferences", label: "Preferences",  icon: Settings },
-            { value: "security",    label: "Security",     icon: ShieldCheck },
-          ].map(tab => (
-            <TabsTrigger
-              key={tab.value}
-              value={tab.value}
-              className="flex h-auto !h-auto w-full items-center justify-start gap-3 px-4 py-3 rounded-2xl data-active:bg-card data-active:text-primary data-active:shadow-sm data-active:border-border/80 text-muted-foreground transition-all hover:bg-muted/50 border border-transparent snap-start shrink-0 min-w-[140px] md:min-w-0"
-            >
-              <tab.icon className="h-4.5 w-4.5 shrink-0" />
-              <span className="text-sm font-bold tracking-tight">{tab.label}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+      <Tabs defaultValue="profile" orientation="vertical" className="flex flex-col md:flex-row gap-4 md:gap-8 lg:gap-10 w-full items-start">
+        <SettingsTabsList />
 
         {/* ── TAB CONTENT AREA ── */}
-        <div className="flex-1 w-full min-w-0">
+        <div className="flex-1 w-full min-w-0 overflow-hidden">
         
         {/* ── PROFILE & KYC ── */}
         <TabsContent value="profile" className="space-y-6 mt-0">
@@ -152,17 +173,17 @@ export default function SettingsPage() {
             }
           >
             <div className="py-2 space-y-5">
-              <div className="flex items-center gap-6 py-4">
-                <div className="relative">
-                  <Avatar className="h-20 w-20 ring-4 ring-primary/20 bg-muted flex flex-col justify-center items-center">
-                    <Building2 className="h-8 w-8 text-muted-foreground opacity-50" />
+              <div className="flex items-center gap-4 py-4">
+                <div className="relative shrink-0">
+                  <Avatar className="h-16 w-16 sm:h-20 sm:w-20 ring-4 ring-primary/20 bg-muted flex flex-col justify-center items-center">
+                    <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground opacity-50" />
                   </Avatar>
                   <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 ring-2 ring-background" />
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold">Zorvyn Global LLC</h3>
-                  <p className="text-sm text-muted-foreground">Entity ID: ZVG-8829-XJ2</p>
-                  <Button variant="outline" size="sm" className="mt-3 h-8 rounded-xl text-xs font-semibold">
+                <div className="min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold truncate">Zorvyn Global LLC</h3>
+                  <p className="text-xs sm:text-sm text-muted-foreground">Entity ID: ZVG-8829-XJ2</p>
+                  <Button variant="outline" size="sm" className="mt-2 h-8 rounded-xl text-xs font-semibold">
                     Upload Logo
                   </Button>
                 </div>
@@ -182,8 +203,8 @@ export default function SettingsPage() {
                 <Label className="text-xs uppercase tracking-wider text-muted-foreground font-bold">Registered Address</Label>
                 <Input defaultValue="800 Financial District, New York, NY 10004" className="h-12 bg-muted/30 border-transparent hover:border-border/60 focus-visible:bg-background rounded-xl px-4 text-base shadow-none" />
               </div>
-              <div className="pt-4 pb-2 flex justify-end">
-                <Button onClick={handleSave} className="h-12 rounded-xl px-8 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
+              <div className="pt-4 pb-2 flex justify-stretch sm:justify-end">
+                <Button onClick={handleSave} className="w-full sm:w-auto h-12 rounded-xl px-8 gap-2 bg-primary hover:bg-primary/90 text-primary-foreground font-bold shadow-lg shadow-primary/20">
                   <Check className="h-5 w-5" /> Save Changes
                 </Button>
               </div>
@@ -246,7 +267,7 @@ export default function SettingsPage() {
                 </div>
               ))}
             </div>
-            <div className="bg-muted/10 p-4 border-t border-border/50 mt-2 flex justify-between items-center -mx-6 -mb-5 px-6 pb-5 rounded-b-[24px]">
+            <div className="bg-muted/10 p-4 border-t border-border/50 mt-2 flex justify-between items-center -mx-4 sm:-mx-6 -mb-5 px-4 sm:px-6 pb-5 rounded-b-[24px]">
               <p className="text-xs text-muted-foreground font-medium">Secured by Plaid Enterprise</p>
               <Button size="sm" className="rounded-xl font-bold bg-foreground text-background hover:bg-foreground/90 gap-2">
                 <Plus className="h-4 w-4" /> Link Institution
