@@ -94,10 +94,8 @@ export function Header() {
 
               {/* Actions */}
               <div className="p-1.5">
-                <DropdownMenuItem asChild className="rounded-xl gap-2.5 cursor-pointer px-3 py-2.5 text-sm font-medium">
-                  <Link href="/settings" className="flex items-center gap-2.5">
-                    <Settings className="h-4 w-4 text-muted-foreground shrink-0" /> Settings
-                  </Link>
+                <DropdownMenuItem onClick={() => router.push("/settings")} className="rounded-xl gap-2.5 cursor-pointer px-3 py-2.5 text-sm font-medium">
+                  <Settings className="h-4 w-4 text-muted-foreground shrink-0" /> Settings
                 </DropdownMenuItem>
                 <DropdownMenuSeparator className="my-1" />
                 <DropdownMenuItem onClick={handleSignOut} className="rounded-xl gap-2.5 cursor-pointer px-3 py-2.5 text-sm font-medium text-rose-500 focus:text-rose-500 focus:bg-rose-500/10">
