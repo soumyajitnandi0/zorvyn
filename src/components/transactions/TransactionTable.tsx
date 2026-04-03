@@ -2,13 +2,17 @@
 
 import { useState } from "react"
 import { useAppStore } from "@/lib/store"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { TransactionFormDialog } from "./TransactionFormDialog"
 import { Trash2, Search, Download, ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react"
 import { toast } from "sonner"
+
+function SortIcon({ field, sortField, sortDir }: { field: "date" | "amount"; sortField: "date" | "amount"; sortDir: "asc" | "desc" }) {
+  if (sortField !== field) return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 text-muted-foreground opacity-50 transition-colors hover:text-foreground hover:opacity-100" />
+  return sortDir === "desc" ? <ArrowDown className="ml-1.5 h-3.5 w-3.5 text-primary" /> : <ArrowUp className="ml-1.5 h-3.5 w-3.5 text-primary" />
+}
 
 export function TransactionTable() {
   const { transactions, role, deleteTransaction } = useAppStore()
@@ -91,57 +95,62 @@ export function TransactionTable() {
     }
   })
 
-  const SortIcon = ({ field }: { field: "date" | "amount" }) => {
-    if (sortField !== field) return <ArrowUpDown className="ml-1.5 h-3.5 w-3.5 text-muted-foreground opacity-50 transition-colors hover:text-foreground hover:opacity-100" />
-    return sortDir === "desc" ? <ArrowDown className="ml-1.5 h-3.5 w-3.5 text-primary" /> : <ArrowUp className="ml-1.5 h-3.5 w-3.5 text-primary" />
-  }
 
   return (
     <div className="space-y-6">
-      {/* FILTER BAR (PILLS) */}
-      <div className="flex flex-col xl:flex-row gap-4 justify-between items-center rounded-3xl bg-card/40 backdrop-blur-2xl p-2 pl-4 border ring-1 ring-black/5 dark:ring-white/5 border-black/5 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.1)]">
-        <div className="flex flex-1 items-center gap-2 w-full xl:max-w-md relative">
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/70" />
-          <Input
-            placeholder="Search..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="pl-11 h-12 w-full rounded-full bg-background/50 border-white/5 shadow-inner focus-visible:ring-1 focus-visible:ring-primary/40 transition-shadow text-base placeholder:text-muted-foreground/50"
-          />
-        </div>
-        <div className="flex flex-wrap gap-2 w-[calc(100vw-40px)] xl:w-auto overflow-x-auto pb-2 xl:pb-0 scrollbar-none items-center pr-2">
+      {/* FILTER BAR (PREMIUM) */}
+      <div className="flex flex-col gap-3 rounded-[24px] bg-card border border-border/80 p-3 shadow-sm relative overflow-hidden">
+        
+        {/* Top Row: Search and Add Transaction */}
+        <div className="flex items-center gap-2 w-full">
+          <div className="flex-1 relative group">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/60 transition-colors group-focus-within:text-primary" />
+            <Input
+              placeholder="Search transactions..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-12 h-12 sm:h-14 w-full rounded-2xl sm:rounded-[20px] bg-muted/40 border-transparent hover:border-border focus-visible:bg-background focus-visible:border-primary/40 focus-visible:ring-4 focus-visible:ring-primary/10 transition-all text-base placeholder:text-muted-foreground/60 shadow-none"
+            />
+          </div>
           {role === "Admin" && (
-             <div className="mr-2 hidden xl:block">
-                <TransactionFormDialog mode="add" />
-             </div>
+            <TransactionFormDialog 
+              mode="add" 
+              triggerClassName="h-12 w-12 sm:h-14 sm:w-auto px-0 sm:px-6 rounded-2xl sm:rounded-[20px] shrink-0 shadow-sm" 
+              hideTextOnMobile 
+            />
           )}
-
+        </div>
+        
+        {/* Bottom Row: Horizontally Scrollable Filters */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none touch-pan-x snap-x snap-mandatory">
           <Select value={filterDateRange} onValueChange={(val) => setFilterDateRange(val || 'all')}>
-            <SelectTrigger className="w-[140px] shrink-0 h-12 rounded-full bg-background/50 border-white/5 shadow-inner hover:bg-card/80 transition-colors">
+            <SelectTrigger className="w-auto min-w-[130px] shrink-0 h-10 rounded-xl bg-background border-border/60 hover:bg-muted transition-colors snap-start text-xs font-semibold tracking-wide">
               <SelectValue placeholder="Date" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-white/5 backdrop-blur-2xl bg-card/80">
+            <SelectContent className="rounded-2xl border-border bg-card/95 backdrop-blur-2xl">
               <SelectItem value="all" className="rounded-xl">All Time</SelectItem>
               <SelectItem value="this_month" className="rounded-xl">This Month</SelectItem>
               <SelectItem value="last_month" className="rounded-xl">Last Month</SelectItem>
               <SelectItem value="last_3_months" className="rounded-xl">Last 3 Months</SelectItem>
             </SelectContent>
           </Select>
+          
           <Select value={filterType} onValueChange={(val) => setFilterType(val || 'all')}>
-            <SelectTrigger className="w-[120px] shrink-0 h-12 rounded-full bg-background/50 border-white/5 shadow-inner hover:bg-card/80 transition-colors">
+            <SelectTrigger className="w-auto min-w-[120px] shrink-0 h-10 rounded-xl bg-background border-border/60 hover:bg-muted transition-colors snap-start text-xs font-semibold tracking-wide">
               <SelectValue placeholder="Type" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-white/5 backdrop-blur-2xl bg-card/80">
+            <SelectContent className="rounded-2xl border-border bg-card/95 backdrop-blur-2xl">
               <SelectItem value="all" className="rounded-xl">All Types</SelectItem>
               <SelectItem value="income" className="rounded-xl">Income</SelectItem>
               <SelectItem value="expense" className="rounded-xl">Expense</SelectItem>
             </SelectContent>
           </Select>
+          
           <Select value={filterCategory} onValueChange={(val) => setFilterCategory(val || 'all')}>
-            <SelectTrigger className="w-[140px] shrink-0 h-12 rounded-full bg-background/50 border-white/5 shadow-inner hover:bg-card/80 transition-colors border-none ring-1 ring-white/5">
+            <SelectTrigger className="w-auto min-w-[140px] shrink-0 h-10 rounded-xl bg-background border-border/60 hover:bg-muted transition-colors snap-start text-xs font-semibold tracking-wide">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-white/5 backdrop-blur-2xl bg-card/80 p-2">
+            <SelectContent className="rounded-2xl border-border bg-card/95 backdrop-blur-2xl p-2">
               <SelectItem value="all" className="rounded-xl cursor-pointer">All Categories</SelectItem>
               {categories.map(c => (
                 <SelectItem key={c} value={c} className="rounded-xl cursor-pointer">{c}</SelectItem>
@@ -149,65 +158,73 @@ export function TransactionTable() {
             </SelectContent>
           </Select>
           
-          <div className="h-6 w-px bg-border/50 mx-1 hidden xl:block" />
+          <div className="h-5 w-px bg-border/80 shrink-0 mx-1 snap-start" />
           
-          <Button variant="outline" className="h-12 shrink-0 rounded-full border-white/5 bg-background/50 hover:bg-card/80 shadow-inner px-5 transition-colors" onClick={exportCSV}>
-            <Download className="mr-2 h-4 w-4" /> Export
+          <Button variant="ghost" className="h-10 shrink-0 rounded-xl hover:bg-muted px-4 transition-colors snap-start text-xs font-semibold tracking-wide" onClick={exportCSV}>
+            <Download className="mr-2 h-4 w-4 text-muted-foreground" /> Export Data
           </Button>
         </div>
       </div>
 
       {/* FLOATING LIST ROWS */}
       <div className="flex flex-col gap-3">
-        {/* Table Headers List Layout */}
-        <div className="flex items-center justify-between px-8 py-2 text-xs font-bold text-muted-foreground/60 uppercase tracking-widest sticky top-0 bg-background/60 backdrop-blur-xl rounded-full border border-black/5 dark:border-white/5 shadow-sm z-10 w-full mb-2">
-           <div className="w-[120px] cursor-pointer hover:text-primary flex items-center transition-colors select-none" onClick={() => handleSort("date")}>Date <SortIcon field="date" /></div>
+        {/* Sticky column header */}
+        <div className="hidden sm:flex items-center justify-between px-8 py-3 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] sticky top-[-1px] bg-card/80 dark:bg-[#0A0B14]/90 backdrop-blur-2xl rounded-xl border border-border/50 shadow-md z-30 w-full mb-1 group-hover:border-primary/20 transition-all duration-300">
+           <div className="w-[120px] cursor-pointer hover:text-primary flex items-center transition-colors select-none" onClick={() => handleSort("date")}>Date <SortIcon field="date" sortField={sortField} sortDir={sortDir} /></div>
            <div className="hidden sm:block flex-1 min-w-[150px]">Transaction</div>
            <div className="hidden md:block w-[140px] text-center">Category</div>
            <div className="hidden lg:block w-[100px] text-center">Type</div>
-           <div className="flex-1 sm:w-[120px] sm:flex-none text-right cursor-pointer hover:text-primary flex items-center justify-end transition-colors select-none" onClick={() => handleSort("amount")}>Amount <SortIcon field="amount" /></div>
+           <div className="flex-1 sm:w-[120px] sm:flex-none text-right cursor-pointer hover:text-primary flex items-center justify-end transition-colors select-none" onClick={() => handleSort("amount")}>Amount <SortIcon field="amount" sortField={sortField} sortDir={sortDir} /></div>
            {role === "Admin" && <div className="w-[80px] text-right hidden xl:block">Actions</div>}
         </div>
         
         {/* Floating Cards */}
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center p-16 rounded-[3rem] bg-card/30 backdrop-blur-md border border-white/5 border-dashed">
-            <div className="w-20 h-20 rounded-full bg-muted/50 flex items-center justify-center mb-6 ring-1 ring-white/10 shadow-inner">
-               <Search className="h-10 w-10 text-muted-foreground/50" />
+          <div className="flex flex-col items-center justify-center p-20 rounded-2xl bg-muted/30 border border-dashed border-border">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center mb-5 ring-1 ring-primary/20">
+               <Search className="h-8 w-8 text-primary/60" />
             </div>
-            <h3 className="text-2xl font-semibold mb-2">No Transactions Found</h3>
-            <p className="text-muted-foreground text-center max-w-sm">Adjust your filters or search query to find what you're looking for.</p>
+            <h3 className="text-xl font-bold mb-2">No Transactions Found</h3>
+            <p className="text-muted-foreground text-center text-sm max-w-sm">Try adjusting your search or filters to find what you&apos;re looking for.</p>
           </div>
         ) : (
           <div className="flex flex-col gap-3 pb-8">
             {filtered.map((tx) => (
-              <div 
-                key={tx.id} 
-                className="group relative flex items-center justify-between p-4 px-6 md:px-8 rounded-3xl bg-card/40 backdrop-blur-xl border border-black/5 dark:border-white/5 shadow-[0_4px_20px_rgb(0,0,0,0.03)] dark:shadow-[0_4px_20px_rgb(0,0,0,0.1)] hover:-translate-y-0.5 hover:bg-card/70 transition-all duration-400 ring-1 ring-black/5 dark:ring-white/5"
+              <div
+                key={tx.id}
+                className="group relative flex items-center justify-between p-4 px-6 md:px-8 rounded-2xl bg-card border border-border hover:-translate-y-0.5 hover:shadow-md transition-all duration-300"
               >
-                 <div className="w-[120px] text-sm text-foreground/80 font-medium font-mono tracking-tight shrink-0">{tx.date}</div>
+                 {/* Date Column (Desktop) */}
+                 <div className="hidden sm:block w-[120px] text-sm text-foreground/80 font-medium font-mono tracking-tight shrink-0">{tx.date}</div>
                  
-                 <div className="flex-1 flex items-center gap-4 min-w-[150px]">
-                   <div className={`flex shrink-0 items-center justify-center w-12 h-12 rounded-full shadow-inner ring-1 ring-inset ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500 ring-emerald-500/20' : 'bg-rose-500/10 text-rose-500 ring-rose-500/20'}`}>
-                     {tx.type === 'income' ? <ArrowDown className="w-5 h-5" /> : <ArrowUp className="w-5 h-5" />}
+                 {/* Transaction Info (Description + Mobile Date) */}
+                 <div className="flex-1 flex items-center gap-3 sm:gap-4 min-w-0 pr-2">
+                   <div className={`flex shrink-0 items-center justify-center w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-inner ring-1 ring-inset ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500 ring-emerald-500/25' : 'bg-rose-500/8 text-rose-500 ring-rose-500/20'}`}>
+                     {tx.type === 'income' ? <ArrowDown className="w-4 h-4 sm:w-5 sm:h-5" /> : <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />}
                    </div>
-                   <span className="font-semibold text-foreground text-base truncate">{tx.description}</span>
+                   <div className="flex flex-col min-w-0">
+                     <span className="font-semibold text-foreground text-sm sm:text-base truncate">{tx.description}</span>
+                     <span className="text-[11px] text-muted-foreground font-mono mt-0.5 sm:hidden">{tx.date}</span>
+                   </div>
                  </div>
                  
                  <div className="hidden md:flex w-[140px] items-center justify-center shrink-0">
-                   <Badge variant="secondary" className="px-4 py-1.5 bg-primary/10 text-primary hover:bg-primary/20 transition-colors border-none rounded-full shadow-sm text-xs font-semibold tracking-wide">
+                   <span className="px-3 py-1 bg-primary/10 text-primary border border-primary/20 rounded-full text-[10px] font-semibold tracking-widest uppercase">
                      {tx.category}
-                   </Badge>
+                   </span>
                  </div>
                  
                  <div className="hidden lg:flex w-[100px] items-center justify-center shrink-0">
-                   <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold shadow-sm ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-500 ring-1 ring-emerald-500/30' : 'bg-rose-500/10 text-rose-500 ring-1 ring-rose-500/30'}`}>
+                   <div className={`inline-flex items-center px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.12em] font-bold ${tx.type === 'income' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 ring-1 ring-emerald-500/25' : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 ring-1 ring-rose-500/20'}`}>
                      {tx.type}
                    </div>
                  </div>
                  
-                 <div className={`w-[130px] sm:w-[120px] shrink-0 text-right text-lg sm:text-xl font-mono tracking-tighter font-bold ${tx.type === "income" ? "text-emerald-500 dark:text-emerald-400" : "text-foreground"}`}>
-                   {tx.type === "income" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                 {/* Amount Column */}
+                 <div className="flex flex-col items-end justify-center shrink-0 ml-2">
+                   <div className={`text-base sm:text-xl font-mono tracking-tighter font-bold ${tx.type === "income" ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}`}>
+                     {tx.type === "income" ? "+" : "-"}${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                   </div>
                  </div>
                  
                  {role === "Admin" && (
@@ -218,7 +235,7 @@ export function TransactionTable() {
                       </Button>
                    </div>
                  )}
-              </div>
+               </div>
             ))}
           </div>
         )}

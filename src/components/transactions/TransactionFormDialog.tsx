@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { useAppStore, Transaction, TransactionType } from "@/lib/store"
-import { Button } from "@/components/ui/button"
+import { Button, buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import {
   Dialog,
   DialogContent,
@@ -21,9 +22,11 @@ import { toast } from "sonner"
 interface TransactionFormDialogProps {
   mode: "add" | "edit"
   initialData?: Transaction
+  triggerClassName?: string
+  hideTextOnMobile?: boolean
 }
 
-export function TransactionFormDialog({ mode, initialData }: TransactionFormDialogProps) {
+export function TransactionFormDialog({ mode, initialData, triggerClassName, hideTextOnMobile }: TransactionFormDialogProps) {
   const { addTransaction, editTransaction } = useAppStore()
   const [open, setOpen] = useState(false)
 
@@ -71,19 +74,16 @@ export function TransactionFormDialog({ mode, initialData }: TransactionFormDial
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      {/* @ts-expect-error React 19 type mismatch for asChild */}
-      <DialogTrigger asChild>
-        {mode === "add" ? (
-          <Button className="gap-2 shadow-sm">
-            <PlusCircle className="h-4 w-4" />
-            Add Transaction
-          </Button>
-        ) : (
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-            <Edit2 className="h-4 w-4" />
-          </Button>
-        )}
-      </DialogTrigger>
+      {mode === "add" ? (
+        <DialogTrigger className={cn(buttonVariants({ variant: "default" }), "gap-2 shadow-sm", triggerClassName)}>
+          <PlusCircle className="h-4 w-4 shrink-0" />
+          <span className={cn(hideTextOnMobile && "hidden sm:inline")}>Add Transaction</span>
+        </DialogTrigger>
+      ) : (
+        <DialogTrigger className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "h-8 w-8 text-muted-foreground hover:text-foreground")}>
+          <Edit2 className="h-4 w-4" />
+        </DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>

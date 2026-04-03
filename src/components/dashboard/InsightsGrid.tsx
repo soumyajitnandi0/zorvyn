@@ -1,8 +1,7 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
-import { Card, CardContent } from "@/components/ui/card"
-import { Lightbulb, TrendingUp, AlertCircle, ShoppingBag } from "lucide-react"
+import { Card } from "@/components/ui/card"
 
 export function InsightsGrid() {
   const { transactions } = useAppStore()
@@ -68,55 +67,46 @@ export function InsightsGrid() {
     monthlyInsightText = `You spent $${thisMonthExpenses.toLocaleString()} this month.`
   }
 
+  const insights = [
+    {
+      icon: "✦",
+      label: "Monthly Analysis",
+      value: monthlyInsightText,
+    },
+    {
+      icon: "↑",
+      label: "Largest Expense",
+      value: `${largestTx.description} · $${largestTx.amount.toLocaleString()}`,
+    },
+    {
+      icon: "⬡",
+      label: "Top Category",
+      value: `${highestCategory[0]} · $${Number(highestCategory[1]).toLocaleString()} total`,
+    },
+    {
+      icon: "◈",
+      label: "Frequent Spends",
+      value: mostFrequentCategory !== "None" ? `${mostFrequentCategory} is your most recurring category` : "No recorded spends yet.",
+    },
+  ]
+
   return (
-    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mt-4">
-      <Card className="bg-gradient-to-br from-blue-500/10 to-transparent border-blue-500/20 shadow-sm">
-        <CardContent className="p-4 flex items-start gap-4">
-          <div className="rounded-full bg-blue-500/20 p-2 text-blue-500">
-            <Lightbulb className="h-4 w-4" />
+    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {insights.map((item) => (
+        <Card key={item.label} className="border-border">
+          <div className="flex flex-col gap-3 p-5">
+            {/* Icon */}
+            <div className="flex items-center gap-3">
+              <span className="text-primary text-xl font-bold leading-none">{item.icon}</span>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">{item.label}</p>
+            </div>
+            {/* Thin separator */}
+            <div className="brand-line" />
+            {/* Value */}
+            <p className="text-sm font-medium text-foreground/90 leading-snug">{item.value}</p>
           </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none text-foreground/80">Smart Insight</p>
-            <p className="text-xs text-muted-foreground font-medium">{monthlyInsightText}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-emerald-500/10 to-transparent border-emerald-500/20 shadow-sm">
-        <CardContent className="p-4 flex items-start gap-4">
-          <div className="rounded-full bg-emerald-500/20 p-2 text-emerald-500">
-            <TrendingUp className="h-4 w-4" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none text-foreground/80">Largest Expense</p>
-            <p className="text-xs text-muted-foreground font-medium">{largestTx.description} (${largestTx.amount})</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-rose-500/10 to-transparent border-rose-500/20 shadow-sm">
-        <CardContent className="p-4 flex items-start gap-4">
-          <div className="rounded-full bg-rose-500/20 p-2 text-rose-500">
-            <AlertCircle className="h-4 w-4" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none text-foreground/80">Top Category</p>
-            <p className="text-xs text-muted-foreground font-medium">{highestCategory[0]} at ${Number(highestCategory[1]).toLocaleString()}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card className="bg-gradient-to-br from-amber-500/10 to-transparent border-amber-500/20 shadow-sm">
-        <CardContent className="p-4 flex items-start gap-4">
-          <div className="rounded-full bg-amber-500/20 p-2 text-amber-500">
-            <ShoppingBag className="h-4 w-4" />
-          </div>
-          <div className="space-y-1">
-            <p className="text-sm font-medium leading-none text-foreground/80">Frequent Spends</p>
-            <p className="text-xs text-muted-foreground font-medium">{mostFrequentCategory !== "None" ? `${mostFrequentCategory} is your most frequent spend.` : 'No recorded spends.'}</p>
-          </div>
-        </CardContent>
-      </Card>
+        </Card>
+      ))}
     </div>
   )
 }

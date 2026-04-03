@@ -49,72 +49,75 @@
 }
 
 :root {
-  --background: oklch(0.99 0 0);
-  --foreground: oklch(0.1 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.1 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.1 0 0);
-  --primary: oklch(0.488 0.243 264.376); /* Indigo */
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.96 0 0);
-  --secondary-foreground: oklch(0.2 0 0);
-  --muted: oklch(0.96 0 0);
-  --muted-foreground: oklch(0.45 0 0);
-  --accent: oklch(0.96 0 0);
-  --accent-foreground: oklch(0.2 0 0);
+  /* Light mode */
+  --background: oklch(0.97 0.005 260);
+  --foreground: oklch(0.1 0.02 260);
+  --card: oklch(0.99 0 0);
+  --card-foreground: oklch(0.1 0.02 260);
+  --popover: oklch(0.99 0 0);
+  --popover-foreground: oklch(0.1 0.02 260);
+  --primary: oklch(0.55 0.22 264);    /* Zorvyn indigo */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.93 0.005 260);
+  --secondary-foreground: oklch(0.2 0.02 260);
+  --muted: oklch(0.93 0.005 260);
+  --muted-foreground: oklch(0.5 0.02 260);
+  --accent: oklch(0.93 0.01 260);
+  --accent-foreground: oklch(0.2 0.02 260);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.9 0 0);
-  --input: oklch(0.9 0 0);
-  --ring: oklch(0.488 0.243 264.376);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.75rem;
-  --sidebar: oklch(0.99 0 0);
-  --sidebar-foreground: oklch(0.1 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.96 0 0);
-  --sidebar-accent-foreground: oklch(0.2 0 0);
-  --sidebar-border: oklch(0.9 0 0);
-  --sidebar-ring: oklch(0.488 0.243 264.376);
+  --border: oklch(0.88 0.01 260);
+  --input: oklch(0.92 0.01 260);
+  --ring: oklch(0.55 0.22 264);
+  --chart-1: oklch(0.55 0.22 264);
+  --chart-2: oklch(0.6 0.18 180);
+  --chart-3: oklch(0.7 0.15 155);
+  --chart-4: oklch(0.65 0.2 300);
+  --chart-5: oklch(0.6 0.18 220);
+  --radius: 0.875rem;
+  --sidebar: oklch(0.97 0.005 260);
+  --sidebar-foreground: oklch(0.1 0.02 260);
+  --sidebar-primary: oklch(0.55 0.22 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.93 0.01 260);
+  --sidebar-accent-foreground: oklch(0.2 0.02 260);
+  --sidebar-border: oklch(0.88 0.01 260);
+  --sidebar-ring: oklch(0.55 0.22 264);
 }
 
 .dark {
-  --background: oklch(0.1 0 0); /* Ultra dark */
-  --foreground: oklch(0.95 0 0);
-  --card: oklch(0.12 0 0);
-  --card-foreground: oklch(0.95 0 0);
-  --popover: oklch(0.12 0 0);
-  --popover-foreground: oklch(0.95 0 0);
-  --primary: oklch(0.6 0.2 260); /* Vibrant Indigo glowing */
-  --primary-foreground: oklch(0.1 0 0);
-  --secondary: oklch(0.15 0 0);
-  --secondary-foreground: oklch(0.95 0 0);
-  --muted: oklch(0.15 0 0);
-  --muted-foreground: oklch(0.65 0 0);
-  --accent: oklch(0.15 0 0);
-  --accent-foreground: oklch(0.95 0 0);
-  --destructive: oklch(0.6 0.2 20);
-  --border: oklch(0.2 0 0);
-  --input: oklch(0.2 0 0);
-  --ring: oklch(0.6 0.2 260);
-  --chart-1: oklch(0.6 0.2 260);
-  --chart-2: oklch(0.6 0.15 160); /* Emerald */
-  --chart-3: oklch(0.6 0.15 40); /* Amber */
-  --chart-4: oklch(0.6 0.15 0); /* Rose */
-  --chart-5: oklch(0.6 0.15 300); /* Purple */
-  --sidebar: oklch(0.1 0 0);
-  --sidebar-foreground: oklch(0.95 0 0);
-  --sidebar-primary: oklch(0.6 0.2 260);
-  --sidebar-primary-foreground: oklch(0.1 0 0);
-  --sidebar-accent: oklch(0.15 0 0);
-  --sidebar-accent-foreground: oklch(0.95 0 0);
-  --sidebar-border: oklch(0.2 0 0);
-  --sidebar-ring: oklch(0.6 0.2 260);
+  /* Deep navy — Zorvyn exact palette */
+  --background: oklch(0.10 0.02 265);    /* #0A0B14 — deep navy */
+  --foreground: oklch(0.94 0.005 260);   /* Near white */
+  --card: oklch(0.12 0.018 265);         /* Slightly lighter navy card */
+  --card-foreground: oklch(0.94 0.005 260);
+  --popover: oklch(0.12 0.018 265);
+  --popover-foreground: oklch(0.94 0.005 260);
+  --primary: oklch(0.60 0.22 264);       /* Zorvyn indigo #6366F1 */
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.15 0.02 265);
+  --secondary-foreground: oklch(0.94 0.005 260);
+  --muted: oklch(0.15 0.018 265);
+  --muted-foreground: oklch(0.55 0.02 260);
+  --accent: oklch(0.16 0.022 265);
+  --accent-foreground: oklch(0.94 0.005 260);
+  --destructive: oklch(0.6 0.22 20);
+  --border: oklch(1 0 0 / 7%);           /* Subtle white border — exactly like Zorvyn */
+  --input: oklch(0.17 0.02 265);
+  --ring: oklch(0.60 0.22 264 / 60%);
+  /* Distinct chart colors as seen in Zorvyn dashboard */
+  --chart-1: oklch(0.60 0.22 264);      /* Indigo */
+  --chart-2: oklch(0.65 0.18 180);      /* Cyan */
+  --chart-3: oklch(0.70 0.15 155);      /* Emerald */
+  --chart-4: oklch(0.65 0.20 300);      /* Violet */
+  --chart-5: oklch(0.62 0.18 220);      /* Blue */
+  --sidebar: oklch(0.10 0.02 265);
+  --sidebar-foreground: oklch(0.94 0.005 260);
+  --sidebar-primary: oklch(0.60 0.22 264);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.15 0.02 265);
+  --sidebar-accent-foreground: oklch(0.94 0.005 260);
+  --sidebar-border: oklch(1 0 0 / 6%);
+  --sidebar-ring: oklch(0.60 0.22 264);
 }
 
 @layer base {
@@ -127,4 +130,58 @@
   html {
     @apply font-sans;
   }
+
+  /* Premium scrollbar — Zorvyn indigo */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(99,102,241,0.25); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(99,102,241,0.55); }
+
+  /* Zorvyn brand gradient text — matches their live site headline */
+  .text-brand-gradient {
+    background: linear-gradient(135deg, #34D399 0%, #818CF8 50%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Indigo separator line */
+  .brand-line {
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent);
+    height: 1px;
+  }
+
+  /* Card top indigo shimmer */
+  .card-brand-edge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.4), rgba(34,211,238,0.3), transparent);
+    border-radius: 1px;
+  }
+
+  /* Legacy aliases — kept for any component still referencing old gold class names */
+  .text-gold-gradient {
+    background: linear-gradient(135deg, #34D399 0%, #818CF8 50%, #06B6D4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .gold-line {
+    background: linear-gradient(90deg, transparent, rgba(99,102,241,0.5), transparent);
+    height: 1px;
+  }
 }
+
+@keyframes orb-pulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.05); }
+}
+@keyframes orb-drift {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(15px, -10px) scale(1.02); }
+  66% { transform: translate(-10px, 8px) scale(0.98); }
+}
+.orb-pulse { animation: orb-pulse 8s ease-in-out infinite; }
+.orb-drift { animation: orb-drift 20s ease-in-out infinite; }

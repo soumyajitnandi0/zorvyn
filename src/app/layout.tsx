@@ -5,11 +5,11 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { Header } from "@/components/layout/Header";
 import { Toaster } from "sonner";
 
-const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-sans", weight: ["300", "400", "500", "600", "700", "800"] });
 
 export const metadata: Metadata = {
   title: "Zorvyn Finance",
-  description: "Modern Premium Finance Dashboard",
+  description: "Ultra-premium Finance Dashboard",
 };
 
 export default function RootLayout({
@@ -18,23 +18,45 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${outfit.variable} font-sans antialiased bg-background text-foreground relative`} suppressHydrationWarning>
-        {/* Glow ambient background */}
-        <div className="fixed inset-0 z-[-1] pointer-events-none bg-background">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.15),rgba(255,255,255,0))] dark:bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(59,130,246,0.25),rgba(255,255,255,0))]"></div>
-        </div>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={`${outfit.variable} font-sans antialiased bg-background text-foreground relative overflow-hidden`} suppressHydrationWarning>
         
-        <div className="flex h-screen w-full overflow-hidden p-2 sm:p-4 lg:p-6 gap-2 sm:gap-4 lg:gap-6">
+        {/* ─── LAYERED AURA BACKGROUND ─── */}
+        <div className="fixed inset-0 z-[-1] pointer-events-none overflow-hidden">
+          {/* Semantic base — adapts light/dark automatically */}
+          <div className="absolute inset-0 bg-background" />
+          {/* Indigo orb top-left — subtle in light, stronger in dark */}
+          <div className="orb-pulse absolute -top-[25%] -left-[5%] w-[700px] h-[700px] rounded-full bg-[radial-gradient(circle,rgba(99,102,241,0.08)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(99,102,241,0.15)_0%,transparent_70%)]" />
+          {/* Cyan orb top-right */}
+          <div className="orb-drift absolute -top-[10%] right-[5%] w-[500px] h-[500px] rounded-full bg-[radial-gradient(circle,rgba(34,211,238,0.05)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(34,211,238,0.08)_0%,transparent_70%)]" style={{animationDelay: '3s'}} />
+          {/* Violet orb bottom-right */}
+          <div className="orb-pulse absolute -bottom-[20%] -right-[10%] w-[600px] h-[600px] rounded-full bg-[radial-gradient(circle,rgba(139,92,246,0.05)_0%,transparent_70%)] dark:bg-[radial-gradient(circle,rgba(139,92,246,0.08)_0%,transparent_70%)]" style={{animationDelay: '6s'}} />
+          {/* Dot grid — visible in dark, very subtle in light */}
+          <div className="absolute inset-0 opacity-[0.025] dark:opacity-[0.04]" style={{backgroundImage: 'radial-gradient(circle, rgba(99,102,241,0.8) 1px, transparent 1px)', backgroundSize: '32px 32px'}} />
+          {/* Top hairline */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+        </div>
+
+        <div className="flex h-screen w-full overflow-hidden">
           <Sidebar />
-          <div className="flex flex-1 flex-col overflow-hidden relative rounded-[2rem] border border-black/5 dark:border-white/5 bg-background/50 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.08)] dark:shadow-[0_8px_40px_rgba(0,0,0,0.2)] ring-1 ring-white/10 dark:ring-white/5">
+          <div className="flex flex-1 flex-col overflow-hidden">
             <Header />
-            <main className="flex-1 overflow-y-auto p-4 md:p-8 lg:p-10 relative z-10 scroll-smooth">
+            <main className="flex-1 overflow-y-auto px-6 py-8 md:px-10 md:py-10 lg:px-12 lg:py-12 relative z-10 scroll-smooth">
               {children}
             </main>
           </div>
         </div>
-        <Toaster position="bottom-right" />
+
+        <Toaster 
+          position="bottom-right"
+          toastOptions={{
+            style: { 
+              background: 'oklch(0.12 0.006 85)', 
+              border: '1px solid oklch(0.72 0.13 85 / 25%)',
+              color: 'oklch(0.94 0.01 85)'
+            }
+          }}
+        />
       </body>
     </html>
   );

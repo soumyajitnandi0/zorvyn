@@ -1,10 +1,19 @@
 "use client"
 
 import { useAppStore } from "@/lib/store"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 
-const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#64748b']
+// Premium, distinct category colors that pop on a dark background
+const COLORS = [
+  '#6366f1', // Indigo
+  '#10b981', // Emerald
+  '#f59e0b', // Amber
+  '#f43f5e', // Rose
+  '#0ea5e9', // Sky
+  '#a855f7', // Purple
+  '#64748b', // Slate
+]
 
 export function ExpenseChart() {
   const { transactions } = useAppStore()
@@ -24,47 +33,71 @@ export function ExpenseChart() {
   const data = Object.entries(categoryTotals)
     .map(([name, value]) => ({ name, value }))
     .sort((a, b) => b.value - a.value)
-    .slice(0, 6) // Top 6 categories
+    .slice(0, 6)
+
+  const total = data.reduce((s, d) => s + d.value, 0)
 
   return (
-    <Card className="col-span-1 lg:col-span-2 hover:shadow-md transition-shadow">
-      <CardHeader>
-        <CardTitle>Spending Breakdown</CardTitle>
-        <CardDescription>Top categories this month</CardDescription>
+    <Card className="col-span-1 lg:col-span-2">
+      <CardHeader className="pb-2">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">Spending Breakdown</p>
+        <CardTitle className="text-xl font-bold">This Month</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="h-[300px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={data}
-                cx="50%"
-                cy="50%"
-                innerRadius={65}
-                outerRadius={90}
-                paddingAngle={4}
-                dataKey="value"
-                stroke="none"
-              >
-                {data.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip 
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter={(value: any) => `$${Number(value).toFixed(2)}`}
-                contentStyle={{ borderRadius: '8px', border: '1px solid rgba(255,255,255,0.1)' }}
-                itemStyle={{ fontWeight: 500 }}
-              />
-              <Legend 
-                verticalAlign="bottom" 
-                height={36} 
-                iconType="circle" 
-                wrapperStyle={{ fontSize: '12px' }}
-              />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
+        {data.length === 0 ? (
+          <div className="h-[280px] flex items-center justify-center text-muted-foreground text-sm">
+            No expense data this month.
+          </div>
+        ) : (
+          <div className="h-[280px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data}
+                  cx="50%"
+                  cy="46%"
+                  innerRadius={68}
+                  outerRadius={95}
+                  paddingAngle={3}
+                  dataKey="value"
+                  stroke="none"
+                >
+                  {data.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} opacity={0.9} />
+                  ))}
+                </Pie>
+                {/* Center total label */}
+                <text x="50%" y="44%" textAnchor="middle" dominantBaseline="middle" style={{ fill: 'var(--foreground)', fontSize: '20px', fontWeight: 700 }}>
+                  ${total.toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                </text>
+                <text x="50%" y="51%" textAnchor="middle" dominantBaseline="middle" style={{ fill: 'var(--muted-foreground)', fontSize: '10px', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                  TOTAL
+                </text>
+                <Tooltip
+                  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                  formatter={(value: any) => [`$${Number(value).toLocaleString(undefined, { minimumFractionDigits: 2 })}`, 'Amount']}
+                  contentStyle={{
+                    borderRadius: '12px',
+                    border: '1px solid var(--border)',
+                    backgroundColor: 'var(--background)',
+                    backdropFilter: 'blur(16px)',
+                    boxShadow: '0 4px 24px rgba(0,0,0,0.1)',
+                    fontSize: '13px'
+                  }}
+                  labelStyle={{ color: 'var(--foreground)', fontWeight: 600, marginBottom: '4px' }}
+                  itemStyle={{ fontWeight: 500, color: 'var(--muted-foreground)' }}
+                />
+                <Legend
+                  verticalAlign="bottom"
+                  height={40}
+                  iconType="circle"
+                  iconSize={8}
+                  wrapperStyle={{ fontSize: '11px', color: 'var(--muted-foreground)', paddingTop: '12px' }}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        )}
       </CardContent>
     </Card>
   )

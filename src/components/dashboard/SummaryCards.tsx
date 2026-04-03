@@ -69,63 +69,63 @@ export function SummaryCards() {
 
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-      <Card className="hover:shadow-md transition-shadow">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Balance</CardTitle>
-          <div className="bg-primary/10 p-2 rounded-full">
+          <CardTitle className="text-sm font-medium tracking-wider uppercase text-muted-foreground">Total Balance</CardTitle>
+          <div className="bg-primary/15 p-2.5 rounded-full ring-1 ring-primary/25">
             <DollarSign className="h-4 w-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-          <p className="text-xs text-muted-foreground font-medium mt-1 flex items-center">
-             {balanceTrend.val >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-rose-500" />}
-            {balanceTrend.text} from last month
+          <div className="text-3xl font-bold tracking-tight">${balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
+             {balanceTrend.val >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-primary" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-destructive" />}
+            <span className={balanceTrend.val >= 0 ? 'text-primary' : 'text-destructive'}>{balanceTrend.text}</span>&nbsp;from last month
           </p>
         </CardContent>
       </Card>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Income</CardTitle>
-          <div className="bg-emerald-500/10 p-2 rounded-full">
+          <CardTitle className="text-sm font-medium tracking-wider uppercase text-muted-foreground">Total Income</CardTitle>
+          <div className="bg-emerald-500/10 p-2.5 rounded-full ring-1 ring-emerald-500/20">
             <ArrowUpRight className="h-4 w-4 text-emerald-500" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-          <p className="text-xs text-muted-foreground font-medium mt-1 flex items-center">
+          <div className="text-3xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400">${income.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
             {incomeTrend.val >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-rose-500" />}
-            {incomeTrend.text} from last month
+            <span className={incomeTrend.val >= 0 ? 'text-emerald-500' : 'text-rose-500'}>{incomeTrend.text}</span>&nbsp;from last month
           </p>
         </CardContent>
       </Card>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Total Expenses</CardTitle>
-          <div className="bg-rose-500/10 p-2 rounded-full">
+          <CardTitle className="text-sm font-medium tracking-wider uppercase text-muted-foreground">Total Expenses</CardTitle>
+          <div className="bg-rose-500/10 p-2.5 rounded-full ring-1 ring-rose-500/20">
             <ArrowDownRight className="h-4 w-4 text-rose-500" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">${expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
-          <p className="text-xs text-muted-foreground font-medium mt-1 flex items-center">
+          <div className="text-3xl font-bold tracking-tight text-rose-600 dark:text-rose-400">${expenses.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+          <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
              {expenseTrend.val < 0 ? <ArrowDownRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowUpRight className="mr-1 h-3 w-3 text-rose-500" />}
-            {expenseTrend.text} from last month
+            <span className={expenseTrend.val < 0 ? 'text-emerald-500' : 'text-rose-500'}>{expenseTrend.text}</span>&nbsp;from last month
           </p>
         </CardContent>
       </Card>
-      <Card className="hover:shadow-md transition-shadow">
+      <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">Savings Rate</CardTitle>
-          <div className="bg-blue-500/10 p-2 rounded-full">
-            <Activity className="h-4 w-4 text-blue-500" />
+          <CardTitle className="text-sm font-medium tracking-wider uppercase text-muted-foreground">Savings Rate</CardTitle>
+          <div className="bg-primary/15 p-2.5 rounded-full ring-1 ring-primary/25">
+            <Activity className="h-4 w-4 text-primary" />
           </div>
         </CardHeader>
         <CardContent>
-          <div className="text-2xl font-bold">{savingsRate.toFixed(1)}%</div>
-          <p className="text-xs text-muted-foreground font-medium mt-1 flex items-center text-muted-foreground">
-             {savingsTrendVal >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-emerald-500" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-rose-500" />}
-            {savingsTrendText} from last month
+          <div className="text-3xl font-bold tracking-tight">{savingsRate.toFixed(1)}%</div>
+          <p className="text-xs text-muted-foreground font-medium mt-1.5 flex items-center">
+             {savingsTrendVal >= 0 ? <ArrowUpRight className="mr-1 h-3 w-3 text-primary" /> : <ArrowDownRight className="mr-1 h-3 w-3 text-destructive" />}
+            <span className={savingsTrendVal >= 0 ? 'text-primary' : 'text-destructive'}>{savingsTrendText}</span>&nbsp;from last month
           </p>
         </CardContent>
       </Card>
