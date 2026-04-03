@@ -62,13 +62,11 @@ export function Header() {
           <ThemeToggle />
           <div className="hidden sm:block h-5 w-px bg-border" />
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60">
-                <Avatar className="h-9 w-9 ring-2 ring-border ring-offset-2 ring-offset-background cursor-pointer transition-all duration-200 hover:ring-primary/60">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
-                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">SN</AvatarFallback>
-                </Avatar>
-              </button>
+            <DropdownMenuTrigger className="rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60">
+              <Avatar className="h-9 w-9 ring-2 ring-border ring-offset-2 ring-offset-background cursor-pointer transition-all duration-200 hover:ring-primary/60">
+                <AvatarImage src="https://github.com/shadcn.png" alt="@user" />
+                <AvatarFallback className="bg-primary/10 text-primary font-bold text-xs">SN</AvatarFallback>
+              </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-64 rounded-2xl p-0 overflow-hidden border border-border/60 shadow-xl bg-card/95 backdrop-blur-xl">
               {/* Profile header */}
